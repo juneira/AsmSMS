@@ -2,6 +2,11 @@ org 0x0000
 
 di
 
+; contants
+
+; number of colors
+COLORS equ (color_end-color)
+
 ; initialize the program
 call init_color
 
@@ -13,10 +18,10 @@ start:
 ; initialize CRAM
 init_color:
   ld hl, color
-  ld b, 4
+  ld b, COLORS
 
   init_color_loop:
-    ld a, 4
+    ld a, COLORS
     sub b
 
     ; set CRAM Address
