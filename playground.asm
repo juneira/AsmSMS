@@ -11,16 +11,22 @@ CONTROL_PORT equ 0bfh
 CRAM_BASE_ADDRESS equ 0c0h
 ; VDP Register Base Address
 VDP_REGISTER_BASE equ 080h
+; VRAM Base Address
+VRAM_BASE_ADDRESS equ 040h
 
 ; number of colors
 COLORS equ (color_end-color)
 ; number of registers
 VDP_REGISTERS equ (vdp_registers_end-vdp_registers)
-
+; number of tiles
+TILES equ (tiles_end-tiles)
 
 ; initialize the program
 call init_vdp_registers
 call init_color
+
+; load tiles
+call load_tiles
 
 start:
   ld a, 50h
@@ -71,13 +77,37 @@ init_color:
     djnz init_color_loop
   ret
 
+; function load_tiles
+; load tiles to VDP Ram
+load_tiles:
+  ld hl, tiles
+  ld b, TILES
+
+  load_tiles_loop:
+    ld a, TILES
+    sub b
+
+    ; set CRAM Address
+    out (CONTROL_PORT), a
+    ld a, VRAM_BASE_ADDRESS
+    out (CONTROL_PORT), a
+
+    ; set CRAM Data
+    ld a, (hl)
+    out (DATA_PORT), a
+
+    inc hl
+
+    djnz load_tiles_loop
+  ret
+
 ;;;; DATA ;;;;
 
 ; COLOR CRAM
 color:
   db 0b00110000
   db 0b00001100
-  db 0b00000011
+  db 0b11111111
   db 0b00000111
   db 0b00000100
   db 0b00100100
@@ -100,3 +130,87 @@ vdp_registers:
   db 0b00000000 ; Background Y Scroll                         | Without scroll on Y axis
   db 0b11111111 ; Line counter                                | ????
 vdp_registers_end:
+
+tiles:
+  ; gram
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  ; snake
+  db 0b00000000
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+
+  db 0b00000000
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+
+  db 0b00000000
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+
+  db 0b00000000
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+
+  db 0b00000000
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+
+  db 0b00000000
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+
+  db 0b00000000
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+
+  db 0b00000000
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+tiles_end:
