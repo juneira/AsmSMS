@@ -15,6 +15,11 @@ VDP_REGISTER_BASE equ 080h
 VRAM_BASE_ADDRESS equ 040h
 ; TileMap Base Address
 TILEMAP_BASE_ADDRESS equ 078h
+; Sprite Base Y Address
+SPRITE_BASE_Y_ADDRESS equ 07fh
+; Sprite Base X Address
+SPRITE_BASE_X_ADDRESS_HI equ 07fh
+SPRITE_BASE_X_ADDRESS_LO equ 080h
 
 ; number of colors
 COLORS equ (color_end-color)
@@ -36,6 +41,9 @@ call load_tiles
 
 ; draw tilemap - background
 call draw_tilemap
+
+; draw sprites
+call draw_sprites
 
 start:
   ld a, 50h
@@ -126,13 +134,56 @@ draw_tilemap:
       ; set VRAM Data
       ld a, 1h
       out (DATA_PORT), a
-      ld a, 0h
+      ld a, 0b
       out (DATA_PORT), a
 
       djnz draw_tilemap_loop_x
     exx
 
     djnz draw_tilemap_loop_y
+  ret
+
+draw_sprites:
+  ; Axis Y
+  ld a, 0
+  out (CONTROL_PORT), a
+  ld a, SPRITE_BASE_Y_ADDRESS
+  out (CONTROL_PORT), a
+
+  ld a, 010h
+  out (DATA_PORT), a
+
+  ld a, 010h
+  out (DATA_PORT), a
+
+  ld a, 010h
+  out (DATA_PORT), a
+
+  ; Stop draw - 0xD0
+  ld a, 0d0h
+  out (DATA_PORT), a
+
+  ; Axis X - 0x10
+  ld a, SPRITE_BASE_X_ADDRESS_LO
+  out (CONTROL_PORT), a
+  ld a, SPRITE_BASE_X_ADDRESS_HI
+  out (CONTROL_PORT), a
+
+  ld a, 10h
+  out (DATA_PORT), a
+  ld a, 0h
+  out (DATA_PORT), a
+
+  ld a, 18h
+  out (DATA_PORT), a
+  ld a, 0h
+  out (DATA_PORT), a
+
+  ld a, 20h
+  out (DATA_PORT), a
+  ld a, 0h
+  out (DATA_PORT), a
+
   ret
 
 ;;;; DATA ;;;;
@@ -148,6 +199,29 @@ color:
   db 0b00101100
   db 0b00101101
   db 0b00101111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+  db 0b00110000
+  db 0b00001100
+  db 0b11111111
+  db 0b00000111
+  db 0b00000100
+  db 0b00100100
+  db 0b00101100
+  db 0b00101101
+  db 0b00101111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
 color_end:
 
 ; VDP Registers
@@ -158,7 +232,7 @@ vdp_registers:
   db 0b11111111 ; Color Table Base Address                    | Default value to Mode 4
   db 0b11111111 ; Pattern Generator Table Base Address        | Default value to SMS1 VDP
   db 0b11111111 ; Sprite Attribute Table Base Address         | Sprite Attribute Table Base Address => 0x3F00
-  db 0b11111111 ; Sprite Pattern Generator Table Base Address | ????
+  db 0b11111011 ; Sprite Pattern Generator Table Base Address | Set Base Address of Tiles to Spits => 0x00
   db 0b00000000 ; Overscan/Backdrop Color                     | Background - Color 0
   db 0b00000000 ; Background X Scroll                         | Without scroll on X axis
   db 0b00000000 ; Background Y Scroll                         | Without scroll on Y axis
