@@ -7,6 +7,8 @@ di
 DATA_PORT equ 0beh
 ; Control Port
 CONTROL_PORT equ 0bfh
+; V Counter Address
+V_COUNTER_ADDRESS equ 07eh
 ; CRAM Base Address
 CRAM_BASE_ADDRESS equ 0c0h
 ; VDP Register Base Address
@@ -32,6 +34,16 @@ TILEMAPS_X equ 32
 ; number of tilemaps on Y axis
 TILEMAPS_Y equ 32
 
+; Snake Pos X axis
+SNAKE_POS_X equ 10h
+; Snake Pos Y axis
+SNAKE_POS_Y equ 10h
+
+; Snake Pos X Axis Address
+SNAKE_POS_X_ADDRESS equ 0c000h
+; Snake Pos Y Axis Address
+SNAKE_POS_Y_ADDRESS equ 0c001h
+
 ; initialize the program
 call init_vdp_registers
 call init_color
@@ -45,8 +57,19 @@ call draw_tilemap
 ; draw sprites
 call draw_sprites
 
+; save x and y of sprite
+ld hl, SNAKE_POS_X_ADDRESS
+ld (hl), SNAKE_POS_X
+ld hl, SNAKE_POS_Y_ADDRESS
+ld (hl), SNAKE_POS_Y
+
 start:
-  ld a, 50h
+  wait_v_sync:
+    in a, (V_COUNTER_ADDRESS)
+    ld b, a
+    djnz wait_v_sync
+
+  call move_sprites
   jp start
 
 ; function init_vdp_registers
@@ -143,6 +166,8 @@ draw_tilemap:
     djnz draw_tilemap_loop_y
   ret
 
+; function draw_sprites
+; draw the snake on initial position
 draw_sprites:
   ; Axis Y
   ld a, 0
@@ -150,13 +175,9 @@ draw_sprites:
   ld a, SPRITE_BASE_Y_ADDRESS
   out (CONTROL_PORT), a
 
-  ld a, 010h
+  ld a, SNAKE_POS_Y
   out (DATA_PORT), a
-
-  ld a, 010h
   out (DATA_PORT), a
-
-  ld a, 010h
   out (DATA_PORT), a
 
   ; Stop draw - 0xD0
@@ -169,17 +190,55 @@ draw_sprites:
   ld a, SPRITE_BASE_X_ADDRESS_HI
   out (CONTROL_PORT), a
 
-  ld a, 10h
+  ld a, SNAKE_POS_X
   out (DATA_PORT), a
   ld a, 0h
   out (DATA_PORT), a
 
-  ld a, 18h
+  ld a, SNAKE_POS_X + 8h
   out (DATA_PORT), a
   ld a, 0h
   out (DATA_PORT), a
 
-  ld a, 20h
+  ld a, SNAKE_POS_X + 10h
+  out (DATA_PORT), a
+  ld a, 0h
+  out (DATA_PORT), a
+
+  ret
+
+; function move_sprites
+; move the snake (ptbr - lah ele 10mil vezes)
+move_sprites:
+  ; Axis X
+  ld a, SPRITE_BASE_X_ADDRESS_LO
+  out (CONTROL_PORT), a
+  ld a, SPRITE_BASE_X_ADDRESS_HI
+  out (CONTROL_PORT), a
+
+  ; update Axis X
+  ld hl, SNAKE_POS_X_ADDRESS
+  ld a, (hl)
+  add 1
+  ld (hl), a
+
+  ld b, a
+
+  ld a, b
+  out (DATA_PORT), a
+  ld a, 0h
+  out (DATA_PORT), a
+
+  ld a, b
+  add 8h
+  ld b, a
+  out (DATA_PORT), a
+  ld a, 0h
+  out (DATA_PORT), a
+
+  ld a, b
+  add 8h
+  ld b, a
   out (DATA_PORT), a
   ld a, 0h
   out (DATA_PORT), a
