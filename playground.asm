@@ -13,6 +13,8 @@ CRAM_BASE_ADDRESS equ 0c0h
 VDP_REGISTER_BASE equ 080h
 ; VRAM Base Address
 VRAM_BASE_ADDRESS equ 040h
+; TileMap Base Address
+TILEMAP_BASE_ADDRESS equ 078h
 
 ; number of colors
 COLORS equ (color_end-color)
@@ -20,6 +22,10 @@ COLORS equ (color_end-color)
 VDP_REGISTERS equ (vdp_registers_end-vdp_registers)
 ; number of tiles
 TILES equ (tiles_end-tiles)
+; number of tilemaps on X axis
+TILEMAPS_X equ 32
+; number of tilemaps on Y axis
+TILEMAPS_Y equ 32
 
 ; initialize the program
 call init_vdp_registers
@@ -27,6 +33,9 @@ call init_color
 
 ; load tiles
 call load_tiles
+
+; draw tilemap - background
+call draw_tilemap
 
 start:
   ld a, 50h
@@ -52,22 +61,19 @@ init_vdp_registers:
 
     djnz init_vdp_registers_loop
 
-
 ; function init_color
 ; initialize CRAM
 init_color:
   ld hl, color
   ld b, COLORS
 
+  ; set CRAM Address
+  ld a, 0h
+  out (CONTROL_PORT), a
+  ld a, CRAM_BASE_ADDRESS
+  out (CONTROL_PORT), a
+
   init_color_loop:
-    ld a, COLORS
-    sub b
-
-    ; set CRAM Address
-    out (CONTROL_PORT), a
-    ld a, CRAM_BASE_ADDRESS
-    out (CONTROL_PORT), a
-
     ; set CRAM Data
     ld a, (hl)
     out (DATA_PORT), a
@@ -83,15 +89,13 @@ load_tiles:
   ld hl, tiles
   ld b, TILES
 
+  ; set CRAM Address
+  ld a, 0h
+  out (CONTROL_PORT), a
+  ld a, VRAM_BASE_ADDRESS
+  out (CONTROL_PORT), a
+
   load_tiles_loop:
-    ld a, TILES
-    sub b
-
-    ; set CRAM Address
-    out (CONTROL_PORT), a
-    ld a, VRAM_BASE_ADDRESS
-    out (CONTROL_PORT), a
-
     ; set CRAM Data
     ld a, (hl)
     out (DATA_PORT), a
@@ -99,6 +103,36 @@ load_tiles:
     inc hl
 
     djnz load_tiles_loop
+  ret
+
+; function draw_tilemap
+; draw tilemap (background)
+draw_tilemap:
+  ; set VRAM Address
+  ld a, 0h
+  out (CONTROL_PORT), a
+  ld a, TILEMAP_BASE_ADDRESS
+  out (CONTROL_PORT), a
+
+  ld b, TILEMAPS_Y
+
+  ; start loop y
+  draw_tilemap_loop_y:
+    exx
+    ld b, TILEMAPS_X
+
+    ; start loop x
+    draw_tilemap_loop_x:
+      ; set VRAM Data
+      ld a, 1h
+      out (DATA_PORT), a
+      ld a, 0h
+      out (DATA_PORT), a
+
+      djnz draw_tilemap_loop_x
+    exx
+
+    djnz draw_tilemap_loop_y
   ret
 
 ;;;; DATA ;;;;
@@ -132,47 +166,6 @@ vdp_registers:
 vdp_registers_end:
 
 tiles:
-  ; gram
-  db 0b11111111
-  db 0b00000000
-  db 0b00000000
-  db 0b00000000
-
-  db 0b11111111
-  db 0b00000000
-  db 0b00000000
-  db 0b00000000
-
-  db 0b11111111
-  db 0b00000000
-  db 0b00000000
-  db 0b00000000
-
-  db 0b11111111
-  db 0b00000000
-  db 0b00000000
-  db 0b00000000
-
-  db 0b11111111
-  db 0b00000000
-  db 0b00000000
-  db 0b00000000
-
-  db 0b11111111
-  db 0b00000000
-  db 0b00000000
-  db 0b00000000
-
-  db 0b11111111
-  db 0b00000000
-  db 0b00000000
-  db 0b00000000
-
-  db 0b11111111
-  db 0b00000000
-  db 0b00000000
-  db 0b00000000
-
   ; snake
   db 0b00000000
   db 0b11111111
@@ -211,6 +204,47 @@ tiles:
 
   db 0b00000000
   db 0b11111111
+  db 0b00000000
+  db 0b00000000
+
+  ; gram
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  db 0b11111111
+  db 0b00000000
+  db 0b00000000
+  db 0b00000000
+
+  db 0b11111111
+  db 0b00000000
   db 0b00000000
   db 0b00000000
 tiles_end:
