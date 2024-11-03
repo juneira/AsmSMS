@@ -64,11 +64,7 @@ ld hl, SNAKE_POS_Y_ADDRESS
 ld (hl), SNAKE_POS_Y
 
 start:
-  wait_v_sync:
-    in a, (V_COUNTER_ADDRESS)
-    ld b, a
-    djnz wait_v_sync
-
+  call wait_v_sync
   call move_sprites
   jp start
 
@@ -205,6 +201,15 @@ draw_sprites:
   ld a, 0h
   out (DATA_PORT), a
 
+  ret
+
+; function wait_v_sync
+; wait while V != 0
+wait_v_sync:
+  wait_v_sync_loop:
+    in a, (V_COUNTER_ADDRESS)
+    ld b, a
+    djnz wait_v_sync_loop
   ret
 
 ; function move_sprites
