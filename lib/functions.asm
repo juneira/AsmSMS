@@ -145,12 +145,12 @@ draw_sprites:
   ld a, 0h
   out (DATA_PORT), a
 
-  ld a, SNAKE_POS_X + 8h
+  ld a, SNAKE_POS_X - 8h
   out (DATA_PORT), a
   ld a, 0h
   out (DATA_PORT), a
 
-  ld a, SNAKE_POS_X + 10h
+  ld a, SNAKE_POS_X - 10h
   out (DATA_PORT), a
   ld a, 0h
   out (DATA_PORT), a
@@ -189,14 +189,14 @@ move_sprites:
   out (DATA_PORT), a
 
   ld a, b
-  add 8h
+  sub 8h
   ld b, a
   out (DATA_PORT), a
   ld a, 0h
   out (DATA_PORT), a
 
   ld a, b
-  add 8h
+  sub 8h
   ld b, a
   out (DATA_PORT), a
   ld a, 0h

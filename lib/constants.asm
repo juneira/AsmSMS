@@ -30,7 +30,7 @@ TILEMAPS_X equ 32
 TILEMAPS_Y equ 32
 
 ; Snake Pos X axis
-SNAKE_POS_X equ 10h
+SNAKE_POS_X equ 20h
 ; Snake Pos Y axis
 SNAKE_POS_Y equ 10h
 
