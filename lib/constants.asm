@@ -1,4 +1,3 @@
-;;;; CONTANTS ;;;;
 ; Data Port
 DATA_PORT equ 0beh
 ; Control Port

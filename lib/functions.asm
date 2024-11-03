@@ -203,5 +203,3 @@ move_sprites:
   out (DATA_PORT), a
 
   ret
-
-;;;; DATA ;;;;
