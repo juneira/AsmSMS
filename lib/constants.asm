@@ -37,4 +37,10 @@ SNAKE_POS_Y equ 10h
 ; Snake Pos X Axis Address
 SNAKE_POS_X_ADDRESS equ 0c000h
 ; Snake Pos Y Axis Address
-SNAKE_POS_Y_ADDRESS equ 0c001h
+SNAKE_POS_Y_ADDRESS equ 0c010h
+
+; Snake Size
+SNAKE_SIZE equ 3
+
+; Snake Body Size in PX
+SNAKE_BODY_SIZE_PX equ 8h
