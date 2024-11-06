@@ -171,22 +171,7 @@ wait_v_sync:
 ; move the snake (ptbr - lah ele 10mil vezes)
 move_sprites:
   call draw_sprites
-
-  in a, (0dch)
-  bit 0, a
-  call z, move_snake_ny
-
-  in a, (0dch)
-  bit 1, a
-  call z, move_snake_y
-
-  in a, (0dch)
-  bit 2, a
-  call z, move_snake_nx
-
-  in a, (0dch)
-  bit 3, a
-  call z, move_snake_x
+  call move_snake
 
   ret
 
@@ -212,6 +197,27 @@ start_snake:
 
 ; function move_snake_x
 ; moves snake on X Axis
+
+move_snake:
+  in a, (0dch)
+  bit 0, a
+  jp z, move_snake_ny
+
+  in a, (0dch)
+  bit 1, a
+  jp z, move_snake_y
+
+  in a, (0dch)
+  bit 2, a
+  jp z, move_snake_nx
+
+  in a, (0dch)
+  bit 3, a
+  jp z, move_snake_x
+
+  mov_snake_end:
+  ret
+
 move_snake_x:
   call move_snake_body
 
@@ -220,7 +226,7 @@ move_snake_x:
   add SNAKE_BODY_SIZE_PX
   ld (hl), a
 
-  ret
+  jp mov_snake_end
 
 ; function move_snake_nx
 ; moves snake on -X Axis
@@ -232,7 +238,7 @@ move_snake_nx:
   sub SNAKE_BODY_SIZE_PX
   ld (hl), a
 
-  ret
+  jp mov_snake_end
 
 ; function move_snake_y
 ; moves snake on Y Axis
@@ -244,7 +250,7 @@ move_snake_y:
   add SNAKE_BODY_SIZE_PX
   ld (hl), a
 
-  ret
+  jp mov_snake_end
 
 ; function move_snake_ny
 ; moves snake on -Y Axis
@@ -256,7 +262,7 @@ move_snake_ny:
   sub SNAKE_BODY_SIZE_PX
   ld (hl), a
 
-  ret
+  jp mov_snake_end
 
 ; function move_snake_body
 ; move the body of snake
