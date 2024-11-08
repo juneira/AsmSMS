@@ -171,12 +171,13 @@ wait_v_sync:
 ; move the snake (ptbr - lah ele 10mil vezes)
 move_sprites:
   call draw_sprites
+  call set_last_move
   call move_snake
 
   ret
 
 ; function start_snake
-; save positions of snake to RAM
+; save positions of snake to RAM and set move to right as default
 start_snake:
   ld hl, SNAKE_POS_X_ADDRESS
   ld (hl), SNAKE_POS_X
@@ -193,31 +194,50 @@ start_snake:
   ld hl, SNAKE_POS_Y_ADDRESS + 2
   ld (hl), SNAKE_POS_Y
 
+  ld hl, LAST_MOVE_ADDRESS
+  ld (hl), 0f7h
+
   ret
 
-; function move_snake_x
-; moves snake on X Axis
-
-move_snake:
+set_last_move:
   in a, (0dch)
+  ld b, a
+  xor 0ffh
+
+  jp z, set_last_move_end
+
+  ld hl, LAST_MOVE_ADDRESS
+  ld (hl), b
+
+  set_last_move_end:
+  ret
+
+; function move_snake
+; moves the snake on X and Y Axis
+move_snake:
+  ld hl, LAST_MOVE_ADDRESS
+  ld a, (hl)
+
   bit 0, a
   jp z, move_snake_ny
 
-  in a, (0dch)
+  ; in a, (0dch)
   bit 1, a
   jp z, move_snake_y
 
-  in a, (0dch)
+  ; in a, (0dch)
   bit 2, a
   jp z, move_snake_nx
 
-  in a, (0dch)
+  ; in a, (0dch)
   bit 3, a
   jp z, move_snake_x
 
   mov_snake_end:
   ret
 
+; function move_snake_x
+; moves snake on X Axis
 move_snake_x:
   call move_snake_body
 

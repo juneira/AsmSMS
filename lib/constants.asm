@@ -44,3 +44,6 @@ SNAKE_SIZE equ 3
 
 ; Snake Body Size in PX
 SNAKE_BODY_SIZE_PX equ 8h
+
+; Last Move Address
+LAST_MOVE_ADDRESS equ 0c020h
