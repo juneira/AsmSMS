@@ -168,7 +168,7 @@ wait_v_sync:
   ret
 
 ; function move_sprites
-; move the snake (ptbr - lah ele 10mil vezes)
+; move the snake
 move_sprites:
   call draw_sprites
   call set_last_move
