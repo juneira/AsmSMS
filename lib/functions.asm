@@ -342,6 +342,28 @@ move_snake_body:
     djnz move_snake_body_y_loop
   ret
 
+; function check_apple
+; verifies if apple was eated
+check_apple:
+  ld a, (APPLE_X_ADDRESS)
+  ld b, a
+  ld a, (SNAKE_POS_X_ADDRESS)
+
+  cp b
+  jp nz, check_apple_end
+
+  ld a, (APPLE_Y_ADDRESS)
+  ld b, a
+  ld a, (SNAKE_POS_Y_ADDRESS)
+
+  cp b
+  jp nz, check_apple_end
+
+  call create_apple
+
+  check_apple_end:
+  ret
+
 ; function create_apple
 ; generates a apple on map
 create_apple:
