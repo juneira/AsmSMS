@@ -14,6 +14,8 @@ init_game:
   ; save initial position of snake
   call start_snake
 
+  call create_apple
+
   ret
 
 ; function init_vdp_registers
@@ -119,6 +121,10 @@ draw_sprites:
   ld a, SPRITE_BASE_Y_ADDRESS
   out (CONTROL_PORT), a
 
+  ; draw apple
+  ld a, (APPLE_Y_ADDRESS)
+  out (DATA_PORT), a
+
   ld b, SNAKE_SIZE
   ld hl, SNAKE_POS_Y_ADDRESS
 
@@ -138,6 +144,12 @@ draw_sprites:
   out (CONTROL_PORT), a
   ld a, SPRITE_BASE_X_ADDRESS_HI
   out (CONTROL_PORT), a
+
+  ; draw apple
+  ld a, (APPLE_X_ADDRESS)
+  out (DATA_PORT), a
+  ld a, 2
+  out (DATA_PORT), a
 
   ld b, SNAKE_SIZE
   ld hl, SNAKE_POS_X_ADDRESS
@@ -328,4 +340,40 @@ move_snake_body:
     ld c, d
 
     djnz move_snake_body_y_loop
+  ret
+
+; function create_apple
+; generates a apple on map
+create_apple:
+  ld b, 0b0h
+  call random
+  ld (APPLE_X_ADDRESS), a
+
+  ld b, 098h
+  call random
+  ld (APPLE_Y_ADDRESS), a
+
+  ret
+
+; function random
+; generates a random number to register A
+random:
+  push hl
+  push de
+  ld hl, (RAND_ADDRESS)
+  ld a, r
+  ld d, a
+  ld e, (hl)
+  add hl, de
+  add a, l
+  xor h
+  ld (RAND_ADDRESS), hl
+  pop de
+  pop hl
+
+  cp b
+
+  jp c, random_end
+  ld a, b
+  random_end:
   ret

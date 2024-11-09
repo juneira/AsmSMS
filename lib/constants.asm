@@ -19,6 +19,14 @@ SPRITE_BASE_Y_ADDRESS equ 07fh
 ; Sprite Base X Address
 SPRITE_BASE_X_ADDRESS_HI equ 07fh
 SPRITE_BASE_X_ADDRESS_LO equ 080h
+; Last Move Address
+LAST_MOVE_ADDRESS equ 0c020h
+; Rand Address
+RAND_ADDRESS equ 0c030h
+; Apple X Axis Address
+APPLE_X_ADDRESS equ 0c040h
+; Apple Y Axis Address
+APPLE_Y_ADDRESS equ 0c041h
 
 ; number of colors
 COLORS equ (color_end-color)
@@ -46,6 +54,3 @@ SNAKE_SIZE equ 3
 
 ; Snake Body Size in PX
 SNAKE_BODY_SIZE_PX equ 8h
-
-; Last Move Address
-LAST_MOVE_ADDRESS equ 0c020h
