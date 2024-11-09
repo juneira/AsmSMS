@@ -2,6 +2,8 @@
 DATA_PORT equ 0beh
 ; Control Port
 CONTROL_PORT equ 0bfh
+; Controller Port
+CONTROLLER_PORT equ 0dch
 ; V Counter Address
 V_COUNTER_ADDRESS equ 07eh
 ; CRAM Base Address

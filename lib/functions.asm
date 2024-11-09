@@ -199,8 +199,10 @@ start_snake:
 
   ret
 
+; function set_last_move
+; saves the last move
 set_last_move:
-  in a, (0dch)
+  in a, (CONTROLLER_PORT)
   ld b, a
   xor 0ffh
 
