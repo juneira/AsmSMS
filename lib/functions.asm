@@ -345,19 +345,41 @@ move_snake_body:
 ; function check_apple
 ; verifies if apple was eated
 check_apple:
+  ; x1 < x2 + w2 e x1 + w1 > x2
   ld a, (APPLE_X_ADDRESS)
   ld b, a
+
   ld a, (SNAKE_POS_X_ADDRESS)
-
+  add a, SNAKE_BODY_SIZE_PX
   cp b
-  jp nz, check_apple_end
 
+  jp c, check_apple_end
+
+  ld a, (SNAKE_POS_X_ADDRESS)
+  ld b, a
+
+  ld a, (APPLE_X_ADDRESS)
+  add a, SNAKE_BODY_SIZE_PX
+  cp b
+  jp c, check_apple_end
+
+  ; y1 < y2 + h2 e y1 + h1 > y2
   ld a, (APPLE_Y_ADDRESS)
   ld b, a
-  ld a, (SNAKE_POS_Y_ADDRESS)
 
+  ld a, (SNAKE_POS_Y_ADDRESS)
+  add a, SNAKE_BODY_SIZE_PX
   cp b
-  jp nz, check_apple_end
+
+  jp c, check_apple_end
+
+  ld a, (SNAKE_POS_Y_ADDRESS)
+  ld b, a
+
+  ld a, (APPLE_Y_ADDRESS)
+  add a, SNAKE_BODY_SIZE_PX
+  cp b
+  jp c, check_apple_end
 
   call create_apple
 

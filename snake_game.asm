@@ -8,8 +8,8 @@ call init_game
 
 start:
   call wait_v_sync
-  call check_apple
   call move_sprites
+  call check_apple
   jp start
 
 include "lib/functions.asm"
