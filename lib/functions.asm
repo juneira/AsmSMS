@@ -14,11 +14,12 @@ init_game:
   ; save initial position of snake
   call start_snake
 
+  ; create apple in map
   call create_apple
 
   ret
 
-; function init_vdp_registers
+  ; function init_vdp_registers
 ; initialize VDP Registers
 init_vdp_registers:
   ld hl, vdp_registers
@@ -125,7 +126,8 @@ draw_sprites:
   ld a, (APPLE_Y_ADDRESS)
   out (DATA_PORT), a
 
-  ld b, SNAKE_SIZE
+  ld a, (SIZE_SNAKE_ADDRESS)
+  ld b, a
   ld hl, SNAKE_POS_Y_ADDRESS
 
   draw_sprites_y_loop:
@@ -151,7 +153,8 @@ draw_sprites:
   ld a, 2
   out (DATA_PORT), a
 
-  ld b, SNAKE_SIZE
+  ld a, (SIZE_SNAKE_ADDRESS)
+  ld b, a
   ld hl, SNAKE_POS_X_ADDRESS
 
   draw_sprites_x_loop:
@@ -191,6 +194,9 @@ move_sprites:
 ; function start_snake
 ; save positions of snake to RAM and set move to right as default
 start_snake:
+  ld hl, SIZE_SNAKE_ADDRESS
+  ld (hl), INIT_SNAKE_SIZE
+
   ld hl, SNAKE_POS_X_ADDRESS
   ld (hl), SNAKE_POS_X
   ld hl, SNAKE_POS_Y_ADDRESS
@@ -302,7 +308,9 @@ move_snake_ny:
 ; move the body of snake
 move_snake_body:
   ; copy X
-  ld b, SNAKE_SIZE-1
+  ld a, (SIZE_SNAKE_ADDRESS)
+  sub 1
+  ld b, a
   ld hl, SNAKE_POS_X_ADDRESS
 
   ld a, (hl)
@@ -322,7 +330,10 @@ move_snake_body:
     djnz move_snake_body_x_loop
 
   ; copy Y
-  ld b, SNAKE_SIZE-1
+  ld a, (SIZE_SNAKE_ADDRESS)
+  sub 1
+  ld b, a
+
   ld hl, SNAKE_POS_Y_ADDRESS
 
   ld a, (hl)
@@ -380,6 +391,11 @@ check_apple:
   add a, SNAKE_BODY_SIZE_PX
   cp b
   jp c, check_apple_end
+
+  ; grows snake
+  ld a, (SIZE_SNAKE_ADDRESS)
+  inc a
+  ld (SIZE_SNAKE_ADDRESS), a
 
   call create_apple
 

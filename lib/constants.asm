@@ -21,6 +21,8 @@ SPRITE_BASE_X_ADDRESS_HI equ 07fh
 SPRITE_BASE_X_ADDRESS_LO equ 080h
 ; Last Move Address
 LAST_MOVE_ADDRESS equ 0c020h
+; Size of Snake Address
+SIZE_SNAKE_ADDRESS equ 0c210h
 ; Rand Address
 RAND_ADDRESS equ 0c030h
 ; Apple X Axis Address
@@ -45,12 +47,12 @@ SNAKE_POS_X equ 20h
 SNAKE_POS_Y equ 10h
 
 ; Snake Pos X Axis Address
-SNAKE_POS_X_ADDRESS equ 0c000h
+SNAKE_POS_X_ADDRESS equ 0c0a0h
 ; Snake Pos Y Axis Address
-SNAKE_POS_Y_ADDRESS equ 0c010h
+SNAKE_POS_Y_ADDRESS equ 0c0f0h
 
-; Snake Size
-SNAKE_SIZE equ 3
+; Initial Snake Size
+INIT_SNAKE_SIZE equ 3
 
 ; Snake Body Size in PX
 SNAKE_BODY_SIZE_PX equ 8h
